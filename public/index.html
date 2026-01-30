@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteForgeYT | Download YouTube</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .service-card {
+            background: #334E68;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .service-card:hover {
+            background: #38BDF8;
+            transform: translateY(-3px);
+        }
+        .method-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        .method-btn {
+            padding: 10px 15px;
+            background: #334E68;
+            border: 1px solid #38BDF8;
+            border-radius: 8px;
+            color: #F1F5F9;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .method-btn.active {
+            background: #38BDF8;
+            color: #1A2B3A;
+            font-weight: bold;
+        }
+        #status {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/ByteForge08" target="_blank">
+        <img src="icon.png" class="creator-icon" alt="Criador">
+    </a>
+
+    <img src="logo.png" class="site-logo" alt="Logo">
+
+    <div class="container">
+        <input type="text" id="urlInput" placeholder="Cole o link do YouTube aqui..." 
+               value="https://youtu.be/WtfaGIdekCk" autocomplete="off">
+        
+        <div class="method-selector">
+            <button class="method-btn active" onclick="setMethod('direct')">
+                🌐 Download Direto
+            </button>
+            <button class="method-btn" onclick="setMethod('service')">
+                ⚡ Serviços Externos
+            </button>
+        </div>
+
+        <!-- Método Direto -->
+        <div id="directMethod" style="display: block;">
+            <div class="button-group">
+                <button onclick="downloadDirect('mp4')" class="btn-download-video">
+                    📥 Baixar MP4 (Seu IP)
+                </button>
+                <button onclick="downloadDirect('mp3')" class="btn-download-audio">
+                    🎵 Baixar MP3 (Seu IP)
+                </button>
+            </div>
+            <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 10px; text-align: center;">
+                Usa SEU navegador para download direto do YouTube
+            </p>
+        </div>
+
+        <!-- Método Serviços -->
+        <div id="serviceMethod" style="display: none;">
+            <div class="service-grid">
+                <div class="service-card" onclick="useService('onlinevideoconverter', 'mp4')">
+                    <h4>OnlineVideoConverter</h4>
+                    <p>MP4 - Conversor direto</p>
+                </div>
+                <div class="service-card" onclick="useService('onlinevideoconverter', 'mp3')">
+                    <h4>OnlineVideoConverter</h4>
+                    <p>MP3 - Áudio de qualidade</p>
+                </div>
+                <div class="service-card" onclick="useService('ssyoutube', 'mp4')">
+                    <h4>SSYouTube</h4>
+                    <p>MP4 - Interface simples</p>
+                </div>
+                <div class="service-card" onclick="useService('ssyoutube', 'mp3')">
+                    <h4>SSYouTube</h4>
+                    <p>MP3 - Conversão rápida</p>
+                </div>
+                <div class="service-card" onclick="useService('y2mate', 'mp4')">
+                    <h4>Y2Mate</h4>
+                    <p>MP4 - Múltiplas qualidades</p>
+                </div>
+                <div class="service-card" onclick="useService('y2mate', 'mp3')">
+                    <h4>Y2Mate</h4>
+                    <p>MP3 - Vários bitrates</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="footer">
+            <p>Use com responsabilidade. Respeite os direitos autorais.</p>
+            &copy; 2026 <b>ByteForge Dev</b>
+        </div>
+    </div>
+
+    <a href="https://github.com/ByteForge08" target="_blank" class="github-footer-link">
+        <img src="git.png" alt="GitHub">
+        <span>ByteForge08</span>
+    </a>
+
+    <script>
+    // Serviços funcionais
+    const SERVICES = {
+        onlinevideoconverter: {
+            mp4: (id) => `https://onlinevideoconverter.pro/pt/youtube-converter?v=${id}&t=mp4`,
+            mp3: (id) => `https://onlinevideoconverter.pro/pt/youtube-converter?v=${id}&t=mp3`
+        },
+        ssyoutube: {
+            mp4: (id) => `https://ssyoutube.com/pt20mp4?v=${id}`,
+            mp3: (id) => `https://ssyoutube.com/pt20mp3?v=${id}`
+        },
+        y2mate: {
+            mp4: (id) => `https://en.y2mate.com/youtube/${id}`,
+            mp3: (id) => `https://en.y2mate.com/youtube-mp3/${id}`
+        }
+    };
+
+    let currentMethod = 'direct';
+
+    function setMethod(method) {
+        currentMethod = method;
+        document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('directMethod').style.display = method === 'direct' ? 'block' : 'none';
+        document.getElementById('serviceMethod').style.display = method === 'service' ? 'block' : 'none';
+    }
+
+    function extractVideoId(url) {
+        if (!url) return null;
+        if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
+        if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
+        return null;
+    }
+
+    async function downloadDirect(type) {
+        const url = document.getElementById('urlInput').value.trim();
+        const videoId = extractVideoId(url);
+        
+        if (!videoId) {
+            showStatus('❌ URL inválida!', 'error');
+            return;
+        }
+        
+        showStatus('🔍 Buscando link direto...', 'info');
+        
+        // Método 1: API pública
+        try {
+            const apiUrl = `https://pipedapi.kavin.rocks/streams/${videoId}`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            
+            if (data.videoStreams && data.videoStreams.length > 0) {
+                const streams = type === 'mp4' ? data.videoStreams : (data.audioStreams || []);
+                if (streams.length > 0) {
+                    const bestStream = streams.sort((a, b) => 
+                        (b.quality || b.bitrate || 0) - (a.quality || a.bitrate || 0)
+                    )[0];
+                    
+                    // Download direto
+                    const a = document.createElement('a');
+                    a.href = bestStream.url;
+                    a.download = `video_${videoId}.${type}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    showStatus('✅ Download iniciado!', 'success');
+                    return;
+                }
+            }
+        } catch (e) {
+            console.log('API falhou, tentando método 2...');
+        }
+        
+        // Método 2: Iframe invisível
+        showStatus('🌐 Conectando ao YouTube...', 'info');
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        document.body.appendChild(iframe);
+        
+        // Método 3: Serviço externo como fallback
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+            showStatus('⚠️ Usando serviço externo...', 'warning');
+            useService('onlinevideoconverter', type);
+        }, 3000);
+    }
+
+    function useService(serviceName, type) {
+        const url = document.getElementById('urlInput').value.trim();
+        const videoId = extractVideoId(url);
+        
+        if (!videoId) {
+            showStatus('❌ URL inválida!', 'error');
+            return;
+        }
+        
+        const service = SERVICES[serviceName];
+        if (service && service[type]) {
+            showStatus(`⚡ Abrindo ${serviceName}...`, 'info');
+            window.open(service[type](videoId), '_blank');
+        }
+    }
+
+    function showStatus(message, type) {
+        const statusEl = document.getElementById('status');
+        statusEl.textContent = message;
+        statusEl.style.display = 'block';
+        statusEl.style.background = type === 'error' ? 'rgba(231, 76, 60, 0.1)' :
+                                  type === 'success' ? 'rgba(39, 174, 96, 0.1)' :
+                                  type === 'warning' ? 'rgba(241, 196, 15, 0.1)' :
+                                  'rgba(56, 189, 248, 0.1)';
+        statusEl.style.border = type === 'error' ? '1px solid #e74c3c' :
+                               type === 'success' ? '1px solid #27ae60' :
+                               type === 'warning' ? '1px solid #f1c40f' :
+                               '1px solid #38BDF8';
+        
+        if (type !== 'error') {
+            setTimeout(() => statusEl.style.display = 'none', 4000);
+        }
+    }
+
+    // Enter para download direto
+    document.getElementById('urlInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') downloadDirect('mp4');
+    });
+    </script>
+</body>
+</html>
