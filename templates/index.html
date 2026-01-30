@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteForgeYT|ByteForge08</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <a href="https://github.com/ByteForge08" target="_blank">
+        <img src="{{ url_for('static', filename='icon.png') }}" class="creator-icon" alt="Criador">
+    </a>
+
+    <img src="{{ url_for('static', filename='logo.png') }}" class="site-logo" alt="Logo">
+
+    <div class="container">
+        <input type="text" id="urlInput" placeholder="Cole o link do YouTube aqui...">
+        <button onclick="buscarVideo()" id="btnBuscar">Analisar Vídeo</button>
+
+        <div id="result" style="display: none;">
+    <img id="thumb" class="thumb" src="">
+    <div id="titulo"></div>
+    <div class="button-group">
+        <a id="downloadLink" class="download-btn video" href="" target="_blank">Baixar MP4</a>
+        <a id="downloadMP3" class="download-btn audio" href="" target="_blank">Baixar Áudio</a>
+    </div>
+</div>
+
+        <div class="footer">
+            <p>Use com responsabilidade. Respeite os direitos autorais.</p>
+            &copy; 2026 <b>ByteForge Dev</b>
+        </div>
+    </div>
+
+    <a href="https://github.com/ByteForge08" target="_blank" class="github-footer-link">
+        <img src="{{ url_for('static', filename='git.png') }}" alt="GitHub">
+        <span>ByteForge08</span>
+    </a>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
